@@ -7,6 +7,7 @@ on:
         description: 'KY'
         required: true
         default: 'KY'
+
       agent_description:
         description: 'KY'
         required: true
@@ -18,15 +19,16 @@ jobs:
 
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: 20
+          cache: npm
 
       - name: Step 1 - Install ClawHub skill
-        run: npx clawhub@latest install verified-agent-identity
+        run: npx clawhub@latest install verified-agent-identity --force
 
       - name: Install script dependencies
         run: |
@@ -38,4 +40,5 @@ jobs:
 
       - name: Step 3 - Link Human to Agent
         run: |
-          node scripts/manualLinkHumanToAgent.js --challenge '{"name": "KY", "description": "KY AI Agent"}'
+          node scripts/manualLinkHumanToAgent.js \
+          --challenge "{\"name\":\"${{ github.event.inputs.agent_name }}\",\"description\":\"${{ github.event.inputs.agent_description }}\"}"
